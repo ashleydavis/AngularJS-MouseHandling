@@ -4,7 +4,12 @@
 	</head>	
 	<body ng-app="app" ng-controller="AppCtrl" mouse-capture>
 
-		{{dataBindingTest}}
+		<div
+			ng-mousedown="mousedown($event)"
+			>
+			{{dataBindingTest}}
+		</div>
+
 
 		<!-- Library code. -->
 		<script src="lib/jquery-2.0.2.js" type="text/javascript"></script>
