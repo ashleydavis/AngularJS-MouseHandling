@@ -35,6 +35,13 @@ angular.module('mouseCapture', [] )
 		//
   		startDrag: function (evt, config) {
 
+  			var draggingElement = $(event.target);
+  			var draggingElementOffset = draggingElement.offset();
+  			var startOffsetX = evt.clientX - draggingElementOffset.left;
+  			var startOffsetY = evt.clientY - draggingElementOffset.top;
+  			var parentElement = draggingElement.parent();
+  			var parentOffset = parentElement.offset();
+
   			var dragging = false;
 			var x = evt.clientX;
 			var y = evt.clientY;
@@ -60,7 +67,11 @@ angular.module('mouseCapture', [] )
 				}
 				else {
 					if (config.dragging) {
-						config.dragging(evt.clientX - x, evt.clientY - y);
+						var deltaX = evt.clientX - x;
+						var deltaY = evt.clientY - y;
+						var relativeX = (evt.clientX - parentOffset.left) - startOffsetX;
+						var relativeY = (evt.clientY - parentOffset.top) - startOffsetY;
+						config.dragging(deltaX, deltaY, relativeX, relativeY);
 
 						$rootScope.$apply();
 					}
