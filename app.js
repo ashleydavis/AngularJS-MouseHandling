@@ -51,8 +51,10 @@ angular.module('app', ['mouseCapture'])
 			//
 			dragging: function (deltaX, deltaY, x, y) {
 
-				$scope.draggable.x = x;
-				$scope.draggable.y = y;
+				$scope.draggable.x = Math.min(Math.max(0, x), $scope.draggableContainer.width - $scope.draggable.width);
+				$scope.draggable.y = Math.min(Math.max(y, 0), $scope.draggableContainer.height - $scope.draggable.height);
+
+
 			},
 
 			// 
@@ -87,8 +89,6 @@ angular.module('app', ['mouseCapture'])
 
 			$attrs.$observe('ngCssLeft', function (newValue) {
 
-				console.log(newValue);
-
 				$element.css('left', newValue + "px");
 			});
 		},
@@ -122,8 +122,6 @@ angular.module('app', ['mouseCapture'])
 		link: function ($scope, $element, $attrs) {
 
 			$attrs.$observe('ngCssWidth', function (newValue) {
-
-				console.log(newValue);
 
 				$element.css('width', newValue + "px");
 			});
