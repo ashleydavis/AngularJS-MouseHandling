@@ -1,0 +1,13 @@
+
+
+.draggable-container {
+	position: absolute;
+	left: 100px;
+	top: 100px;
+	background: blue;
+}
+
+.draggable {
+	position: absolute;
+	background: red;
+}
