@@ -2,12 +2,12 @@
 //
 // Define the 'app' module.
 //
-angular.module('app', ['mouseCapture'])
+angular.module('app', ['dragging', 'mouseCapture', ])
 
 //
 // Define the main application controller.
 //
-.controller('AppCtrl', function AppCtrl ($scope, mouseCapture) {
+.controller('AppCtrl', function AppCtrl ($scope, dragging) {
 
 	//
 	// Position of the draggable element.
@@ -35,7 +35,7 @@ angular.module('app', ['mouseCapture'])
 		//
 		// Initiate dragging, but only if the mouse moves beyound the threshold value.
 		//
-		mouseCapture.startDrag(event, {
+		dragging.startDrag(event, {
 
 
 			//

@@ -7,16 +7,42 @@ angular.module('mouseCapture', [] )
 .factory('mouseCapture', function ($rootScope) {
 
 	//
-	// Threshold for dragging.
-	// When the mouse moves by at least this amount dragging starts.
-	//
-	var threshold = 5; //todo: make this an attr option.
-
-	//
 	// Element that the mouse capture applies to, defaults to 'document' 
 	// unless the 'mouse-capture' directive is used.
 	//
 	var $element = document; 
+
+	//
+	// Set when mouse capture is acquired to an object that contains 
+	// handlers for 'mousemove' and 'mouseup' events.
+	//
+	var mouseCaptureConfig = null;
+
+	//
+	// Handler for mousemove events while the mouse is 'captured'.
+	//
+	var mouseMove = function (evt) {
+
+		if (mouseCaptureConfig && mouseCaptureConfig.mouseMove) {
+			
+			mouseCaptureConfig.mouseMove(evt);
+
+			$rootScope.$apply();
+		}
+	};
+
+	//
+	// Handler for mouseup event while the mouse is 'captured'.
+	//
+	var mouseUp = function (evt) {
+
+		if (mouseCaptureConfig && mouseCaptureConfig.mouseUp) {
+			
+			mouseCaptureConfig.mouseUp(evt);
+
+			$rootScope.$apply();
+		}
+	};
 
 	return {
 
@@ -30,82 +56,18 @@ angular.module('mouseCapture', [] )
 		},
 
 		//
-		// Called by users of the service to register a mousedown event and start dragging.
-		// Acquires the 'mouse capture' until the mouseup event.
+		// Acquire the 'mouse capture'.
+		// After acquiring the mouse capture mousemove and mouseup events will be 
+		// forwarded to callbacks in 'config'.
 		//
-  		startDrag: function (evt, config) {
-
-  			var draggingElement = $(event.target);
-  			var draggingElementOffset = draggingElement.offset();
-  			var startOffsetX = evt.clientX - draggingElementOffset.left;
-  			var startOffsetY = evt.clientY - draggingElementOffset.top;
-  			var parentElement = draggingElement.parent();
-  			var parentOffset = parentElement.offset();
-
-  			var dragging = false;
-			var x = evt.clientX;
-			var y = evt.clientY;
+		acquire: function (evt, config) {
 
 			//
-			// Handler for mousemove events while the mouse is 'captured'.
+			// Release any prior mouse capture.
 			//
-	  		var mouseMove = function (evt) {
-	  			
-				if (!dragging) {
-					if (evt.clientX - x > threshold ||
-						evt.clientY - y > threshold)
-					{
-						dragging = true;
+			this.release();
 
-						if (config.dragStarted) {
-							config.dragStarted();
-
-							$rootScope.$apply();
-						}
-
-					}
-				}
-				else {
-					if (config.dragging) {
-						var deltaX = evt.clientX - x;
-						var deltaY = evt.clientY - y;
-						var relativeX = (evt.clientX - parentOffset.left) - startOffsetX;
-						var relativeY = (evt.clientY - parentOffset.top) - startOffsetY;
-						config.dragging(deltaX, deltaY, relativeX, relativeY);
-
-						$rootScope.$apply();
-					}
-
-					x = evt.clientX;
-					y = evt.clientY;
-				}
-	  		};
-
-			//
-			// Handler for mouseup event while the mouse is 'captured'.
-			// Mouseup releases the mouse capture.
-			//
-	  		var mouseUp = function (evt) {
-
-	  			if (dragging) {
-  					if (config.dragEnded) {
-  						config.dragEnded();
-  					}
-	  			}
-	  			else {
-  					if (config.clicked) {
-  						config.clicked();
-  					}
-	  			}
-
-				$rootScope.$apply();
-
-	  			$element.unbind("mousemove", mouseMove);
-	  			$element.unbind("mouseup", mouseUp);
-
-	  			evt.stopPropagation();
-	  			evt.preventDefault();
-	  		};
+			mouseCaptureConfig = config;
 
 	  		// 
 	  		// In response to the mousedown event register handlers for mousemove and mouseup 
@@ -113,13 +75,29 @@ angular.module('mouseCapture', [] )
 	  		//
   			$element.mousemove(mouseMove);
   			$element.mouseup(mouseUp);
+		},
 
-	  		evt.stopPropagation();
-	  		evt.preventDefault();
-  		},
+		//
+		// Release the 'mouse capture'.
+		//
+		release: function () {
 
+			if (mouseCaptureConfig) {
+
+				if (mouseCaptureConfig.released) {
+					//
+					// Let the client know that their 'mouse capture' has been released.
+					//
+					mouseCaptureConfig.released();
+				}
+
+				mouseCaptureConfig = null;
+
+  				$element.unbind("mousemove", mouseMove);
+  				$element.unbind("mouseup", mouseUp);
+  			}
+		},
 	};
-
 })
 
 //
