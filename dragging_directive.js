@@ -85,7 +85,7 @@ angular.module('dragging', ['mouseCapture', ] )
 			//
 	  		var mouseUp = function (evt) {
 
-	  			released();
+	  			mouseCapture.release();
 
 	  			evt.stopPropagation();
 	  			evt.preventDefault();
