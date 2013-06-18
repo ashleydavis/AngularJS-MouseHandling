@@ -14,7 +14,6 @@ angular.module('dragging', ['mouseCapture', ] )
 
 	return {
 
-
 		//
 		// Called by users of the service to register a mousedown event and start dragging.
 		// Acquires the 'mouse capture' until the mouseup event.

@@ -51,10 +51,11 @@ angular.module('app', ['dragging', 'mouseCapture', ])
 			//
 			dragging: function (deltaX, deltaY, x, y) {
 
+				//
+				// Constrain the draggable element to the draggable container.
+				//
 				$scope.draggable.x = Math.min(Math.max(0, x), $scope.draggableContainer.width - $scope.draggable.width);
 				$scope.draggable.y = Math.min(Math.max(y, 0), $scope.draggableContainer.height - $scope.draggable.height);
-
-
 			},
 
 			// 
