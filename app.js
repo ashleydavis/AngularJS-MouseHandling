@@ -32,6 +32,13 @@ angular.module('app', ['dragging', 'mouseCapture', ])
 	//
 	$scope.mousedown = function (event) {
 
+		var draggingElement = $(event.target);
+		var draggingElementOffset = draggingElement.offset();
+		var parentElement = draggingElement.parent();
+		var parentOffset = parentElement.offset();
+		var startX = event.pageX - draggingElementOffset.left;
+		var startY = event.pageY - draggingElementOffset.top;
+
 		//
 		// Initiate dragging, but only if the mouse moves beyound the threshold value.
 		//
@@ -49,13 +56,16 @@ angular.module('app', ['dragging', 'mouseCapture', ])
 			//
 			// Callback during dragging for each mouse movement.
 			//
-			dragging: function (deltaX, deltaY, x, y) {
+			dragging: function (x, y, evt) {
+
+				var relativeX = (x - parentOffset.left) - startX;
+				var relativeY = (y - parentOffset.top) - startY;
 
 				//
 				// Constrain the draggable element to the draggable container.
 				//
-				$scope.draggable.x = Math.min(Math.max(0, x), $scope.draggableContainer.width - $scope.draggable.width);
-				$scope.draggable.y = Math.min(Math.max(y, 0), $scope.draggableContainer.height - $scope.draggable.height);
+				$scope.draggable.x = Math.min(Math.max(0, relativeX), $scope.draggableContainer.width - $scope.draggable.width);
+				$scope.draggable.y = Math.min(Math.max(relativeY, 0), $scope.draggableContainer.height - $scope.draggable.height);
 			},
 
 			// 
