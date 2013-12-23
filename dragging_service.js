@@ -10,9 +10,10 @@ angular.module('dragging', ['mouseCapture', ] )
 	// Threshold for dragging.
 	// When the mouse moves by at least this amount dragging starts.
 	//
-	var threshold = 5; //todo: make this an attr option.
+	var threshold = 5;
 
 	return {
+
 
 		//
 		// Called by users of the service to register a mousedown event and start dragging.
@@ -20,16 +21,9 @@ angular.module('dragging', ['mouseCapture', ] )
 		//
   		startDrag: function (evt, config) {
 
-  			var draggingElement = $(event.target);
-  			var draggingElementOffset = draggingElement.offset();
-  			var startOffsetX = evt.clientX - draggingElementOffset.left;
-  			var startOffsetY = evt.clientY - draggingElementOffset.top;
-  			var parentElement = draggingElement.closest('.draggable-container') || draggingElement.parent();
-  			var parentOffset = parentElement.offset();
-
   			var dragging = false;
-			var x = evt.clientX;
-			var y = evt.clientY;
+			var x = evt.pageX;
+			var y = evt.pageY;
 
 			//
 			// Handler for mousemove events while the mouse is 'captured'.
@@ -37,29 +31,29 @@ angular.module('dragging', ['mouseCapture', ] )
 	  		var mouseMove = function (evt) {
 
 				if (!dragging) {
-					if (evt.clientX - x > threshold ||
-						evt.clientY - y > threshold)
+					if (evt.pageX - x > threshold ||
+						evt.pageY - y > threshold)
 					{
 						dragging = true;
 
 						if (config.dragStarted) {
-							var relativeX = evt.clientX - parentOffset.left;
-							var relativeY = evt.clientY - parentOffset.top;
-							config.dragStarted(relativeX, relativeY, evt, startOffsetX, startOffsetY);
+							config.dragStarted(x, y, evt);
+						}
+
+						if (config.dragging) {
+							// First 'dragging' call to take into account that we have 
+							// already moved the mouse by a 'threshold' amount.
+							config.dragging(evt.pageX, evt.pageY, evt);
 						}
 					}
 				}
 				else {
 					if (config.dragging) {
-						var deltaX = evt.clientX - x;
-						var deltaY = evt.clientY - y;
-						var relativeX = evt.clientX - parentOffset.left;
-						var relativeY = evt.clientY - parentOffset.top;
-						config.dragging(deltaX, deltaY, relativeX, relativeY, evt, startOffsetX, startOffsetY);
+						config.dragging(evt.pageX, evt.pageY, evt);
 					}
 
-					x = evt.clientX;
-					y = evt.clientY;
+					x = evt.pageX;
+					y = evt.pageY;
 				}
 	  		};
 
