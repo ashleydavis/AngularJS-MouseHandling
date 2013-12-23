@@ -99,11 +99,11 @@ The second parameter contains handlers for dragging events:
 
 ```javascript
 dragging.startDrag(event, {
-	dragStarted: function() {
+	dragStarted: function(x, y, evt) {
 		...
 	},
 
-	dragging: function (deltaX, deltaY, x, y) {
+	dragging: function (x, y, evt) {
 		...
 	},
 
