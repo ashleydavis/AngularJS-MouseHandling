@@ -1,4 +1,3 @@
-
 angular.module('mouseCapture', [] )
 
 //
@@ -75,6 +74,9 @@ angular.module('mouseCapture', [] )
 	  		//
   			$element.mousemove(mouseMove);
   			$element.mouseup(mouseUp);
+  			$element.mouseout(mouseUp);
+  			$element.bind('touchmove', mouseMove);
+  			$element.bind('touchend', mouseUp);
 		},
 
 		//
@@ -95,6 +97,8 @@ angular.module('mouseCapture', [] )
 
   				$element.unbind("mousemove", mouseMove);
   				$element.unbind("mouseup", mouseUp);
+  				$element.unbind('touchmove', mouseMove);
+  				$element.unbind('touchend', mouseUp);
   			}
 		},
 	};

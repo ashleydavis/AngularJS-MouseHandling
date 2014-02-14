@@ -1,4 +1,3 @@
-
 angular.module('dragging', ['mouseCapture', ] )
 
 //
@@ -21,18 +20,37 @@ angular.module('dragging', ['mouseCapture', ] )
 		//
   		startDrag: function (evt, config) {
 
-  			var dragging = false;
-			var x = evt.pageX;
-			var y = evt.pageY;
+  			var dragging = false,
+  			    x,
+			    y,
+			    type = evt.type,
+			    isTouch = (type == "touchstart" || type == "touchmove");
 
 			//
 			// Handler for mousemove events while the mouse is 'captured'.
 			//
+			if (isTouch) {
+				x = evt.originalEvent.touches[0].pageX;
+				y = evt.originalEvent.touches[0].pageY;
+			} else {
+				x = evt.pageX;
+				y = evt.pageY;
+			}
+			
 	  		var mouseMove = function (evt) {
+	  			var pageX, pageY;
+	  			
+	  			if (isTouch) {
+	  				pageX = evt.originalEvent.touches[0].pageX;
+	  				pageY = evt.originalEvent.touches[0].pageY;
+	  			} else {
+	  				pageX = evt.pageX;
+	  				pageY = evt.pageY;
+	  			}
 
 				if (!dragging) {
-					if (evt.pageX - x > threshold ||
-						evt.pageY - y > threshold)
+					if (Math.abs(pageX - x) > threshold ||
+						Math.abs(pageY - y) > threshold)
 					{
 						dragging = true;
 
@@ -43,17 +61,17 @@ angular.module('dragging', ['mouseCapture', ] )
 						if (config.dragging) {
 							// First 'dragging' call to take into account that we have 
 							// already moved the mouse by a 'threshold' amount.
-							config.dragging(evt.pageX, evt.pageY, evt);
+							config.dragging(pageX, pageY, evt);
 						}
 					}
 				}
 				else {
 					if (config.dragging) {
-						config.dragging(evt.pageX, evt.pageY, evt);
+						config.dragging(pageX, pageY, evt);
 					}
 
-					x = evt.pageX;
-					y = evt.pageY;
+					x = pageX;
+					y = pageY;
 				}
 	  		};
 
